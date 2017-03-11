@@ -9,10 +9,10 @@ import android.nfc.Tag;
 import android.os.AsyncTask;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import com.facebook.react.bridge.ActivityEventListener;
 import com.facebook.react.bridge.Callback;
+import com.facebook.react.bridge.LifecycleEventListener;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
@@ -21,20 +21,18 @@ import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.novadart.reactnativenfc.parser.NdefParser;
 import com.novadart.reactnativenfc.parser.TagParser;
 
-public class ReactNativeNFCModule extends ReactContextBaseJavaModule implements ActivityEventListener {
+public class ReactNativeNFCModule extends ReactContextBaseJavaModule implements ActivityEventListener,LifecycleEventListener {
 
     public static final String EVENT_NFC_DISCOVERED = "__NFC_DISCOVERED";
 
     // caches the last message received, to pass it to the listeners when it reconnects
     private WritableMap cachedNFCData;
+    private boolean initialIntentProcessed = false;
 
     public ReactNativeNFCModule(ReactApplicationContext reactContext) {
         super(reactContext);
         reactContext.addActivityEventListener(this);
-        if(reactContext.getCurrentActivity() != null){
-            // necessary because NFC might cause the activity to start and we need to catch that data too
-            handleIntent(reactContext.getCurrentActivity().getIntent());
-        }
+        reactContext.addLifecycleEventListener(this);
     }
 
     @Override
@@ -53,8 +51,7 @@ public class ReactNativeNFCModule extends ReactContextBaseJavaModule implements 
     }
 
     private void handleIntent(Intent intent) {
-        Log.i("####################", "Processing intent: "+ (intent != null ? intent.getAction() : "null"));
-        if (intent != null) {
+        if (intent != null && intent.getAction() != null) {
 
             switch (intent.getAction()){
 
@@ -78,15 +75,12 @@ public class ReactNativeNFCModule extends ReactContextBaseJavaModule implements 
                     break;
 
             }
-
-
         }
     }
 
     @ReactMethod
     public void getLatestNFCData(Callback callback){
-        Log.i("####################", "returning cache: "+ (cachedNFCData != null));
-        callback.invoke(cachedNFCData);
+        callback.invoke(DataUtils.cloneWritableMap(cachedNFCData));
     }
 
 
@@ -104,8 +98,24 @@ public class ReactNativeNFCModule extends ReactContextBaseJavaModule implements 
     private void processTag(Tag tag){
         TagProcessingTask task = new TagProcessingTask();
         task.execute(tag);
-
     }
+
+    @Override
+    public void onHostResume() {
+        if(!initialIntentProcessed){
+            if(getReactApplicationContext().getCurrentActivity() != null){ // it shouldn't be null but you never know
+                // necessary because NFC might cause the activity to start and we need to catch that data too
+                handleIntent(getReactApplicationContext().getCurrentActivity().getIntent());
+            }
+            initialIntentProcessed = true;
+        }
+    }
+
+    @Override
+    public void onHostPause() {}
+
+    @Override
+    public void onHostDestroy() {}
 
 
     private class NdefProcessingTask extends AsyncTask<NdefMessage[],Void,WritableMap> {
@@ -118,7 +128,6 @@ public class ReactNativeNFCModule extends ReactContextBaseJavaModule implements 
 
         @Override
         protected void onPostExecute(WritableMap ndefData) {
-            Log.i("####################", "saving to cache the NDEF");
             cachedNFCData = ndefData;
             sendEvent(ndefData);
         }
@@ -135,7 +144,6 @@ public class ReactNativeNFCModule extends ReactContextBaseJavaModule implements 
 
         @Override
         protected void onPostExecute(WritableMap tagData) {
-            Log.i("####################", "saving to cache: "+tagData);
             cachedNFCData = tagData;
             sendEvent(tagData);
         }
