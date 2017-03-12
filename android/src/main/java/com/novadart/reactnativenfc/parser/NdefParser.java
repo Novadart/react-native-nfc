@@ -60,17 +60,17 @@ public class NdefParser {
 
     private static WritableMap parseRecord(Record record) throws UnknownNdefRecordException {
         if(record instanceof TextRecord){
-            return parseRecord((TextRecord)record);
+            return parseTextRecord((TextRecord)record);
         } else if(record instanceof UriRecord){
-            return parseRecord((UriRecord)record);
+            return parseUriRecord((UriRecord)record);
         } else if(record instanceof MimeRecord){
-            return parseRecord((MimeRecord)record);
+            return parseMimeRecord((MimeRecord)record);
         } else {
             throw new UnknownNdefRecordException();
         }
     }
 
-    private static WritableMap parseRecord(TextRecord record){
+    private static WritableMap parseTextRecord(TextRecord record){
         WritableMap result = new WritableNativeMap();
         result.putString("type", NdefRecordType.TEXT.name());
         result.putString("data",record.getText());
@@ -79,14 +79,14 @@ public class NdefParser {
         return result;
     }
 
-    private static WritableMap parseRecord(UriRecord record){
+    private static WritableMap parseUriRecord(UriRecord record){
         WritableMap result = new WritableNativeMap();
         result.putString("type", NdefRecordType.URI.name());
         result.putString("data", record.getUri() != null ? record.getUri().toString() : null);
         return result;
     }
 
-    private static WritableMap parseRecord(MimeRecord record){
+    private static WritableMap parseMimeRecord(MimeRecord record){
         WritableMap result = new WritableNativeMap();
         result.putString("type", NdefRecordType.MIME.name());
         result.putString("data", record.getData() != null ? Base64.encodeToString(record.getData(), Base64.DEFAULT) : null);
