@@ -1,0 +1,26 @@
+{
+  "name": "react-native-nfc",
+  "description": "A React Native module that allows ",
+  "version": "0.1.0",
+  "private": true,
+  "main": "index.js",
+  "keywords": [
+    "react-native",
+    "nfc",
+    "ndef",
+    "react",
+    "native"
+  ],
+  "devDependencies": {
+    "react-native": "0.40.0"
+  },
+  "nativePackage": true,
+  "author": "Novadart",
+  "contributors": [
+    {
+      "name": "Giordano Battilana (giordy)",
+      "email": "giordano.battilana@novadart.com"
+    }
+  ],
+  "types": "./index.d.ts"
+}
