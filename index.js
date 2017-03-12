@@ -7,7 +7,7 @@ export const NfcDataType = {
     TAG : "TAG"
 };
 
-export const RecordType = {
+export const NdefRecordType = {
     TEXT : "TEXT",
     URI : "URI",
     MIME : "MIME"
@@ -19,7 +19,7 @@ const _listeners = [];
 
 let _registerToEvents = () => {
     if(!_registeredToEvents){
-        NativeModules.ReactNativeNFC.getLatestNFCData(_notifyListeners);
+        NativeModules.ReactNativeNFC.getStartUpNfcData(_notifyListeners);
         DeviceEventEmitter.addListener('__NFC_DISCOVERED', _notifyListeners);
         _registeredToEvents = true;
     }

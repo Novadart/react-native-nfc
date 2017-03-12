@@ -6,13 +6,14 @@ import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.bridge.WritableNativeArray;
 import com.facebook.react.bridge.WritableNativeMap;
+import com.novadart.reactnativenfc.NfcDataType;
 
 public class TagParser {
 
     public static WritableMap parse(Tag tag){
         WritableMap result = new WritableNativeMap();
 
-        result.putString("type","TAG");
+        result.putString("type", NfcDataType.TAG.name());
 
         WritableMap data = new WritableNativeMap();
 
