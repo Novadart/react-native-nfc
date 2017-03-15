@@ -1,8 +1,9 @@
 {
   "name": "react-native-nfc",
-  "description": "A React Native module that allows ",
-  "version": "0.1.0",
-  "private": true,
+  "description": "This project has the goal of making it easy (or easier) to scan NFC tags and read the NDEF records they contain",
+  "license": "MIT",
+  "homepage": "https://github.com/Novadart/react-native-nfc",
+  "version": "0.2.0",
   "main": "index.js",
   "keywords": [
     "react-native",
@@ -11,8 +12,18 @@
     "react",
     "native"
   ],
+  "bugs": {
+    "url": "https://github.com/Novadart/react-native-nfc/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Novadart/react-native-nfc.git"
+  },
   "devDependencies": {
     "react-native": "0.40.0"
+  },
+  "peerDependencies": {
+    "react-native": ">=0.40.0"
   },
   "nativePackage": true,
   "author": "Novadart",
@@ -21,6 +32,5 @@
       "name": "Giordano Battilana (giordy)",
       "email": "giordano.battilana@novadart.com"
     }
-  ],
-  "types": "./index.d.ts"
+  ]
 }
