@@ -82,7 +82,7 @@ Create the file `android/src/main/res/xml/nfc_tech_filter.xml` and add the follo
 ### Example AndroidManifest.xml
  ```xml
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.plannerdemo"
+          package="com.reactnativenfcdemo"
           android:versionCode="1"
           android:versionName="1.0">
 
@@ -142,8 +142,6 @@ function listener(payload){
     // TODO
 }
 
-
-
 NFC.addListener(listener);
 ```
 
@@ -199,12 +197,14 @@ The listener receives a JSON object that has a **type** property with possible v
 * **NfcDataType.TAG** - if the NFC tag did not contain NDEF data (or could not be parsed) hence we get just info about the TAG
 
 
+
 ### NDEF Payload format
 
 Property | Values
 --- | --- 
 type | Always **NfcDataType.NDEF**
 data | Contains an array of messages. Each message is an array of records.
+ 
  
 
 #### NDEF Records format
@@ -215,9 +215,8 @@ Here is the list of currently supported records:
 Type | Data | Other properties
 --- | --- | ---
 NdefRecordType.TEXT | The text string | *encoding* and *locale*
-NdefRecordType.URI | The URI | -
+NdefRecordType.URI | The URI string | -
 NdefRecordType.MIME | Base64 data of the mime data | -
-
 
 
 
