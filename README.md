@@ -1,6 +1,6 @@
 # Reading NFC tags for React Native (Android only)
 
-This project has the goal of making it easy (or easier) to scan NFC tags and read the NDEF records it contains.
+This project has the goal of making it easy (or easier) to scan NFC tags and read the NDEF records they contain.
 
 To read the NDEF data it makes use of the library **[ndef-tools-for-android](https://github.com/skjolber/ndef-tools-for-android)**.
 
@@ -8,7 +8,7 @@ Once you've integrated the plugin in your project you'll be able to receive the 
 You will receive the data *even if your app is closed (or killed)* and is started as a consequence of a NFC event.
 
 ## Requirements
-This library is compatible and was tested with React Native projects with version >= 0.40
+This library is compatible and was tested with React Native projects with version >= 0.40.0
 
 
 ## Installation
