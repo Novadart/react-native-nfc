@@ -203,6 +203,7 @@ The listener receives a JSON object that has a **type** property with possible v
 Property | Values
 --- | --- 
 type | Always **NfcDataType.NDEF**
+id   | The id of the tag in hex format.
 data | Contains an array of messages. Each message is an array of records.
  
  
