@@ -4,8 +4,6 @@ This project has the goal of making it easy (or easier) to scan NFC tags and rea
 
 To read the NDEF data it makes use of the library **[ndef-tools-for-android](https://github.com/skjolber/ndef-tools-for-android)**.
 
-Once you've integrated the plugin in your project you'll be able to receive the data read via NFC by your Android device. 
-You will receive the data *even if your app is closed (or killed)* and is started as a consequence of a NFC event.
 
 ## Requirements
 This library is compatible and was tested with React Native projects with version >= 0.40.0
@@ -190,6 +188,41 @@ NFC.addListener((payload) => {
 
 ```
 
+Notice:
+Once you've integrated the plugin in this way you'll be able to receive the data read via NFC by your Android device. 
+You will receive the data *even if your app is closed (or killed)* and is started as a consequence of a NFC event.
+If you want to receive the data in a given time,just change the position where you addListener to NFC,such as doing it in the componentDidMount in a page of your program.
+
+```javascript
+import NFC, {NfcDataType, NdefRecordType} from "react-native-nfc";
+
+export default class NfcScanPage extends Component {
+
+  constructor(props){
+    super(props);
+  }
+
+    render() {
+        return (
+              ....
+        );
+    }
+
+    componentDidMount(){
+      this.bindNfcListener();
+    }
+
+    bindNfcListener(){
+      NFC.addListener((payload)=>{
+        alert(payload.data.id);
+      })
+    }
+
+
+}
+
+
+```
 
 The listener receives a JSON object that has a **type** property with possible values:
 
