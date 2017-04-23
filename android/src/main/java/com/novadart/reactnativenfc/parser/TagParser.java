@@ -27,12 +27,12 @@ public class TagParser {
 
         data.putArray("techList",techList);
         data.putString("description",tag.toString());
-        data.putString("id",ByteArrayToHexString(tag.getId()));
+        data.putString("id", convertByteArrayToHexString(tag.getId()));
         result.putMap("data",data);
         return result;
     }
 
-    public static String ByteArrayToHexString(byte[] inarray) {
+    private static String convertByteArrayToHexString(byte[] inarray) {
         int i, j, in;
         String[] hex = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F"};
         String out = "";
