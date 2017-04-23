@@ -3,7 +3,7 @@
   "description": "This project has the goal of making it easy (or easier) to scan NFC tags and read the NDEF records they contain",
   "license": "MIT",
   "homepage": "https://github.com/Novadart/react-native-nfc",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "main": "index.js",
   "keywords": [
     "react-native",
@@ -31,6 +31,10 @@
     {
       "name": "Giordano Battilana (giordy)",
       "email": "giordano.battilana@novadart.com"
+    },
+    {
+      "name": "Symous",
+      "url": "https://github.com/Symous" 
     }
   ]
 }
