@@ -56,13 +56,10 @@ public class ReactNativeNFCModule extends ReactContextBaseJavaModule implements 
 
     private void handleIntent(Intent intent, boolean startupIntent) {
         if (intent != null && intent.getAction() != null) {
-            getReactApplicationContext()
-                    .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-                    .emit(EVENT_NFC_DISCOVERED, intent.getAction());
 
-            // switch (intent.getAction()){
+            switch (intent.getAction()){
 
-                // case NfcAdapter.ACTION_NDEF_DISCOVERED:
+                case NfcAdapter.ACTION_NDEF_DISCOVERED:
                     Parcelable[] rawMessages = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
 
                     if (rawMessages != null) {
@@ -72,16 +69,16 @@ public class ReactNativeNFCModule extends ReactContextBaseJavaModule implements 
                         }
                         processNdefMessages(messages,startupIntent);
                     }
-                    // break;
+                    break;
 
                 // ACTION_TAG_DISCOVERED is an unlikely case, according to https://developer.android.com/guide/topics/connectivity/nfc/nfc.html
-                // case NfcAdapter.ACTION_TAG_DISCOVERED:
-                // case NfcAdapter.ACTION_TECH_DISCOVERED:
+                case NfcAdapter.ACTION_TAG_DISCOVERED:
+                case NfcAdapter.ACTION_TECH_DISCOVERED:
                     Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
                     processTag(tag,startupIntent);
-                    // break;
+                    break;
 
-            // }
+            }
         }
     }
 
