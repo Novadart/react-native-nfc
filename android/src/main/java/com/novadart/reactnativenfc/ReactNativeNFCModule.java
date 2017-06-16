@@ -9,6 +9,7 @@ import android.nfc.Tag;
 import android.os.AsyncTask;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
+import android.app.PendingIntent;
 
 import com.facebook.react.bridge.ActivityEventListener;
 import com.facebook.react.bridge.Callback;
@@ -30,6 +31,8 @@ public class ReactNativeNFCModule extends ReactContextBaseJavaModule implements 
     private boolean startupNfcDataRetrieved = false;
 
     private boolean startupIntentProcessed = false;
+
+    private NfcAdapter mNfcAdapter;
 
     public ReactNativeNFCModule(ReactApplicationContext reactContext) {
         super(reactContext);
@@ -53,10 +56,13 @@ public class ReactNativeNFCModule extends ReactContextBaseJavaModule implements 
 
     private void handleIntent(Intent intent, boolean startupIntent) {
         if (intent != null && intent.getAction() != null) {
+            getReactApplicationContext()
+                    .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+                    .emit(EVENT_NFC_DISCOVERED, intent.getAction());
 
-            switch (intent.getAction()){
+            // switch (intent.getAction()){
 
-                case NfcAdapter.ACTION_NDEF_DISCOVERED:
+                // case NfcAdapter.ACTION_NDEF_DISCOVERED:
                     Parcelable[] rawMessages = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
 
                     if (rawMessages != null) {
@@ -66,16 +72,16 @@ public class ReactNativeNFCModule extends ReactContextBaseJavaModule implements 
                         }
                         processNdefMessages(messages,startupIntent);
                     }
-                    break;
+                    // break;
 
                 // ACTION_TAG_DISCOVERED is an unlikely case, according to https://developer.android.com/guide/topics/connectivity/nfc/nfc.html
-                case NfcAdapter.ACTION_TAG_DISCOVERED:
-                case NfcAdapter.ACTION_TECH_DISCOVERED:
+                // case NfcAdapter.ACTION_TAG_DISCOVERED:
+                // case NfcAdapter.ACTION_TECH_DISCOVERED:
                     Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
                     processTag(tag,startupIntent);
-                    break;
+                    // break;
 
-            }
+            // }
         }
     }
 
@@ -123,13 +129,34 @@ public class ReactNativeNFCModule extends ReactContextBaseJavaModule implements 
             }
             startupIntentProcessed = true;
         }
+
+        if (mNfcAdapter != null) {
+            setupForegroundDispatch(getCurrentActivity(), mNfcAdapter);
+        } else {
+            mNfcAdapter = NfcAdapter.getDefaultAdapter(getReactApplicationContext());
+        }
     }
 
     @Override
-    public void onHostPause() {}
+    public void onHostPause() {
+        if (mNfcAdapter != null)
+            stopForegroundDispatch(getCurrentActivity(), mNfcAdapter);
+    }
 
     @Override
     public void onHostDestroy() {}
+
+    public static void setupForegroundDispatch(final Activity activity, NfcAdapter adapter) {
+        final Intent intent = new Intent(activity.getApplicationContext(), activity.getClass());
+        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+
+        final PendingIntent pendingIntent = PendingIntent.getActivity(activity.getApplicationContext(), 0, intent, 0);
+        adapter.enableForegroundDispatch(activity, pendingIntent, null, null);
+    }
+
+    public static void stopForegroundDispatch(final Activity activity, NfcAdapter adapter) {
+        adapter.disableForegroundDispatch(activity);
+    }
 
 
     private class NdefProcessingTask extends AsyncTask<NdefMessage[],Void,WritableMap> {
