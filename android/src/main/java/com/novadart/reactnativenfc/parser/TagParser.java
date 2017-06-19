@@ -11,6 +11,7 @@ import com.novadart.reactnativenfc.NfcDataType;
 public class TagParser {
 
     public static WritableMap parse(Tag tag){
+        if (tag == null) return null;
         WritableMap result = new WritableNativeMap();
 
         result.putString("type", NfcDataType.TAG.name());
