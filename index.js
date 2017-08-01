@@ -13,14 +13,14 @@ export const NdefRecordType = {
     MIME : "MIME"
 };
 
-
+const NFC_DISCOVERED = '__NFC_DISCOVERED';
 let _registeredToEvents = false;
 const _listeners = [];
 
 let _registerToEvents = () => {
     if(!_registeredToEvents){
         NativeModules.ReactNativeNFC.getStartUpNfcData(_notifyListeners);
-        DeviceEventEmitter.addListener('__NFC_DISCOVERED', _notifyListeners);
+        DeviceEventEmitter.addListener(NFC_DISCOVERED, _notifyListeners);
         _registeredToEvents = true;
     }
 };
@@ -40,4 +40,9 @@ NFC.addListener = (callback) => {
     _registerToEvents();
 };
 
+NFC.removeListener = () => {
+    DeviceEventEmitter.removeListener(NFC_DISCOVERED);
+    _listeners.splice(0, _listeners.length);
+    _registeredToEvents = false;
+};
 export default NFC;
