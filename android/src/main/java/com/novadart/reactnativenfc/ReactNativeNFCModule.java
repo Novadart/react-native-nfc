@@ -55,10 +55,6 @@ public class ReactNativeNFCModule extends ReactContextBaseJavaModule implements 
     private void handleIntent(Intent intent, boolean startupIntent) {
         if (intent != null && intent.getAction() != null) {
 
-        Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
-        byte[] id = tag.getId();
-        String serialNumber = DataUtils.bytesToHex(id);
-
             switch (intent.getAction()){
 
                 case NfcAdapter.ACTION_NDEF_DISCOVERED:
@@ -70,6 +66,9 @@ public class ReactNativeNFCModule extends ReactContextBaseJavaModule implements 
                             messages[i] = (NdefMessage) rawMessages[i];
                         }
 
+                        Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
+                        String serialNumber = getSerialNumber(tag);
+
                         processNdefMessages(serialNumber,messages,startupIntent);
                     }
                     break;
@@ -77,6 +76,9 @@ public class ReactNativeNFCModule extends ReactContextBaseJavaModule implements 
                 // ACTION_TAG_DISCOVERED is an unlikely case, according to https://developer.android.com/guide/topics/connectivity/nfc/nfc.html
                 case NfcAdapter.ACTION_TAG_DISCOVERED:
                 case NfcAdapter.ACTION_TECH_DISCOVERED:
+                    Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
+                    String serialNumber = getSerialNumber(tag);
+
                     processTag(serialNumber,tag,startupIntent);
                     break;
 
@@ -106,8 +108,15 @@ public class ReactNativeNFCModule extends ReactContextBaseJavaModule implements 
     private void sendEvent(@Nullable WritableMap payload) {
         getReactApplicationContext()
                 .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-                .emit(EVENT_NFC_DISCOVERED, payload); }
+                .emit(EVENT_NFC_DISCOVERED, payload);
+    }
 
+    private String getSerialNumber(Tag tag){
+        byte[] id = tag.getId();
+        String serialNumber = DataUtils.bytesToHex(id);
+
+        return serialNumber;
+    }
 
     private void processNdefMessages(String serialNumber, NdefMessage[] messages, boolean startupIntent){
         NdefProcessingTask task = new NdefProcessingTask(serialNumber, startupIntent);
