@@ -10,10 +10,11 @@ import com.novadart.reactnativenfc.NfcDataType;
 
 public class TagParser {
 
-    public static WritableMap parse(Tag tag){
+    public static WritableMap parse(String serialNumber, Tag tag){
         WritableMap result = new WritableNativeMap();
 
         result.putString("type", NfcDataType.TAG.name());
+        result.putString("id", serialNumber);
 
         WritableMap data = new WritableNativeMap();
 

@@ -78,7 +78,7 @@ public class ReactNativeNFCModule extends ReactContextBaseJavaModule implements 
                 case NfcAdapter.ACTION_TAG_DISCOVERED:
                 case NfcAdapter.ACTION_TECH_DISCOVERED:
                     Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
-                    processTag(tag,startupIntent);
+                    processTag(serialNumber,tag,startupIntent);
                     break;
 
             }
@@ -115,8 +115,8 @@ public class ReactNativeNFCModule extends ReactContextBaseJavaModule implements 
         task.execute(messages);
     }
 
-    private void processTag(Tag tag, boolean startupIntent){
-        TagProcessingTask task = new TagProcessingTask(startupIntent);
+    private void processTag(String serialNumber, Tag tag, boolean startupIntent){
+        TagProcessingTask task = new TagProcessingTask(serialNumber, startupIntent);
         task.execute(tag);
     }
 
@@ -166,16 +166,18 @@ public class ReactNativeNFCModule extends ReactContextBaseJavaModule implements 
 
     private class TagProcessingTask extends AsyncTask<Tag,Void,WritableMap> {
 
+        private final String serialNumber;
         private final boolean startupIntent;
 
-        TagProcessingTask(boolean startupIntent) {
+        TagProcessingTask(String serialNumber, boolean startupIntent) {
+            this.serialNumber = serialNumber;
             this.startupIntent = startupIntent;
         }
 
         @Override
         protected WritableMap doInBackground(Tag... params) {
             Tag tag = params[0];
-            return TagParser.parse(tag);
+            return TagParser.parse(serialNumber, tag);
         }
 
         @Override
