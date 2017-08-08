@@ -55,6 +55,10 @@ public class ReactNativeNFCModule extends ReactContextBaseJavaModule implements 
     private void handleIntent(Intent intent, boolean startupIntent) {
         if (intent != null && intent.getAction() != null) {
 
+        Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
+        byte[] id = tag.getId();
+        String serialNumber = DataUtils.bytesToHex(id);
+
             switch (intent.getAction()){
 
                 case NfcAdapter.ACTION_NDEF_DISCOVERED:
@@ -66,10 +70,6 @@ public class ReactNativeNFCModule extends ReactContextBaseJavaModule implements 
                             messages[i] = (NdefMessage) rawMessages[i];
                         }
 
-                        Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
-                        byte[] id = tag.getId();
-                        String serialNumber = DataUtils.bytesToHex(id);
-
                         processNdefMessages(serialNumber,messages,startupIntent);
                     }
                     break;
@@ -77,7 +77,6 @@ public class ReactNativeNFCModule extends ReactContextBaseJavaModule implements 
                 // ACTION_TAG_DISCOVERED is an unlikely case, according to https://developer.android.com/guide/topics/connectivity/nfc/nfc.html
                 case NfcAdapter.ACTION_TAG_DISCOVERED:
                 case NfcAdapter.ACTION_TECH_DISCOVERED:
-                    Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
                     processTag(serialNumber,tag,startupIntent);
                     break;
 
