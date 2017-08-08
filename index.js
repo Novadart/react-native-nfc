@@ -15,7 +15,7 @@ export const NdefRecordType = {
 
 const NFC_DISCOVERED = '__NFC_DISCOVERED';
 let _registeredToEvents = false;
-const _listeners = [];
+let _listeners = {};
 
 let _registerToEvents = () => {
     if(!_registeredToEvents){
@@ -27,22 +27,27 @@ let _registerToEvents = () => {
 
 let _notifyListeners = (data) => {
     if(data){
-        for(let i in _listeners){
-            _listeners[i](data);
+        for(let _listener in _listeners){
+            _listeners[_listener](data);
         }
     }
 };
 
 const NFC = {};
 
-NFC.addListener = (callback) => {
-    _listeners.push(callback);
+NFC.addListener = (name, callback) => {
+    _listeners[name] = callback;
     _registerToEvents();
 };
 
-NFC.removeListener = () => {
-    DeviceEventEmitter.removeListener(NFC_DISCOVERED);
-    _listeners.splice(0, _listeners.length);
+NFC.removeListener = (name) => {
+    delete _listeners[name];
+};
+
+NFC.removeAllListeners = () => {
+    DeviceEventEmitter.removeAllListeners(NFC_DISCOVERED);
+    _listeners = {};
     _registeredToEvents = false;
 };
+
 export default NFC;
