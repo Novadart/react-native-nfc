@@ -40,9 +40,4 @@ NFC.addListener = (callback) => {
     _registerToEvents();
 };
 
-NFC.removeListener = () => {
-    DeviceEventEmitter.removeListener(NFC_DISCOVERED);
-    _listeners.splice(0, _listeners.length);
-    _registeredToEvents = false;
-};
 export default NFC;
