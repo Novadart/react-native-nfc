@@ -11,6 +11,7 @@ import android.os.Parcelable;
 import android.support.annotation.Nullable;
 
 import com.facebook.react.bridge.ActivityEventListener;
+import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.LifecycleEventListener;
 import com.facebook.react.bridge.ReactApplicationContext;
@@ -64,7 +65,12 @@ public class ReactNativeNFCModule extends ReactContextBaseJavaModule implements 
                         for (int i = 0; i < rawMessages.length; i++) {
                             messages[i] = (NdefMessage) rawMessages[i];
                         }
-                        processNdefMessages(messages,startupIntent);
+
+                        Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
+                        byte[] id = tag.getId();
+                        String serialNumber = DataUtils.bytesToHex(id);
+
+                        processNdefMessages(serialNumber,messages,startupIntent);
                     }
                     break;
 
@@ -104,8 +110,8 @@ public class ReactNativeNFCModule extends ReactContextBaseJavaModule implements 
                 .emit(EVENT_NFC_DISCOVERED, payload); }
 
 
-    private void processNdefMessages(NdefMessage[] messages, boolean startupIntent){
-        NdefProcessingTask task = new NdefProcessingTask(startupIntent);
+    private void processNdefMessages(String serialNumber, NdefMessage[] messages, boolean startupIntent){
+        NdefProcessingTask task = new NdefProcessingTask(serialNumber, startupIntent);
         task.execute(messages);
     }
 
@@ -134,16 +140,18 @@ public class ReactNativeNFCModule extends ReactContextBaseJavaModule implements 
 
     private class NdefProcessingTask extends AsyncTask<NdefMessage[],Void,WritableMap> {
 
+        private final String serialNumber;
         private final boolean startupIntent;
 
-        NdefProcessingTask(boolean startupIntent) {
+        NdefProcessingTask(String serialNumber, boolean startupIntent) {
+            this.serialNumber = serialNumber;
             this.startupIntent = startupIntent;
         }
 
         @Override
         protected WritableMap doInBackground(NdefMessage[]... params) {
             NdefMessage[] messages = params[0];
-            return NdefParser.parse(messages);
+            return NdefParser.parse(serialNumber, messages);
         }
 
         @Override
