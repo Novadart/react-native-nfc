@@ -21,9 +21,10 @@ import java.util.Iterator;
 
 public class NdefParser {
 
-    public static WritableMap parse(NdefMessage[] messages){
+    public static WritableMap parse(String serialNumber, NdefMessage[] messages){
         WritableMap result = new WritableNativeMap();
         result.putString("type", NfcDataType.NDEF.name());
+        result.putString("id", serialNumber);
         WritableArray data = new WritableNativeArray();
         if(messages != null) {
             for (NdefMessage m : messages) {
