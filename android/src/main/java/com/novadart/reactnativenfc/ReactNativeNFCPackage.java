@@ -24,7 +24,8 @@ public class ReactNativeNFCPackage implements ReactPackage {
         return Collections.emptyList();
     }
 
-    @Override
+    // Deprecated RN 0.55
+    // @Override
     public List<ViewManager> createViewManagers(ReactApplicationContext reactContext) {
         return Collections.emptyList();
     }
