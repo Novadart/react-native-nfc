@@ -29,7 +29,7 @@ android {
         targetSdkVersion 23
         versionCode 1
         versionName computeVersionName()
-
+        multiDexEnabled true
     }
 
 }
